@@ -1,48 +1,48 @@
 package kr.co.hta.vo;
 
 public class OrderItem {
-	long No;
-	long BookNo;
-	long Price;
-	long Amount;
+	long no;
+	int bookNo;
+	int price;
+	int amount;
 	
 	public OrderItem () {}
 
 	public long getNo() {
-		return No;
+		return no;
 	}
 
 	public void setNo(long no) {
-		No = no;
+		this.no = no;
 	}
 
-	public long getBookNo() {
-		return BookNo;
+	public int getBookNo() {
+		return bookNo;
 	}
 
-	public void setBookNo(long bookNo) {
-		BookNo = bookNo;
+	public void setBookNo(int bookNo) {
+		this.bookNo = bookNo;
 	}
 
-	public long getPrice() {
-		return Price;
+	public int getPrice() {
+		return price;
 	}
 
-	public void setPrice(long price) {
-		Price = price;
+	public void setPrice(int price) {
+		this.price = price;
 	}
 
-	public long getAmount() {
-		return Amount;
+	public int getAmount() {
+		return amount;
 	}
 
-	public void setAmount(long amount) {
-		Amount = amount;
+	public void setAmount(int amount) {
+		this.amount = amount;
 	}
 
 	@Override
 	public String toString() {
-		return "OrderItem [No=" + No + ", BookNo=" + BookNo + ", Price=" + Price + ", Amount=" + Amount + "]";
+		return "OrderItem [No=" + no + ", BookNo=" + bookNo + ", Price=" + price + ", Amount=" + amount + "]";
 	}
 
 	

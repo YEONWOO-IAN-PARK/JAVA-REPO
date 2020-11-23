@@ -4,21 +4,21 @@ import java.util.Date;
 
 public class Book {
 
-	private long no;
+	private int no;
 	private String title;
 	private String writer;
 	private String genre;
-	private long price;
-	private long stock;
+	private int price;
+	private int stock;
 	private String status;
 	private Date createDate;
 	
 	public Book() {}
 	
-	public long getNo() {
+	public int getNo() {
 		return no;
 	}
-	public void setNo(long no) {
+	public void setNo(int no) {
 		this.no = no;
 	}
 	public String getTitle() {
@@ -39,16 +39,16 @@ public class Book {
 	public void setGenre(String genre) {
 		this.genre = genre;
 	}
-	public long getPrice() {
+	public int getPrice() {
 		return price;
 	}
-	public void setPrice(long price) {
+	public void setPrice(int price) {
 		this.price = price;
 	}
-	public long getStock() {
+	public int getStock() {
 		return stock;
 	}
-	public void setStock(long stock) {
+	public void setStock(int stock) {
 		this.stock = stock;
 	}
 	public String getStatus() {

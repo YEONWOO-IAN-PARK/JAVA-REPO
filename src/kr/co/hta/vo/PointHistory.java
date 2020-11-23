@@ -7,7 +7,7 @@ public class PointHistory {
 	private long no;
 	private String userId;
 	private String content;
-	private long point;
+	private int point;
 	private Date createDate;
 	
 	public PointHistory() {}
@@ -30,10 +30,10 @@ public class PointHistory {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public long getPoint() {
+	public int getPoint() {
 		return point;
 	}
-	public void setPoint(long point) {
+	public void setPoint(int point) {
 		this.point = point;
 	}
 	public Date getCreateDate() {

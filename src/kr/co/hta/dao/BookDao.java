@@ -21,14 +21,22 @@ public class BookDao {
     private static final String UPDATE_BOOK_SQL = 
     	"UPDATE SAMPLE_BOOKS SET BOOK_TITLE = ?, BOOK_WRITER = ?, BOOK_GENRE = ?, BOOK_PRICE = ?, BOOK_STOCK = ?, BOOK_STATUS = ? WHERE BOOK_NO = ?";
 	
+    // 싱글턴 객체로 만든기(생성자 은닉화, 정적변수에 객체담기, 객체를 제공하는 정적메소드 정의하기)
+    private BookDao() {}
+    private static BookDao bookDao = new BookDao();
+    public static BookDao getInstance() {
+    	return bookDao;
+    }
+    
+    
     public void insertBook(Book book) throws SQLException {
         Connection con = ConnectionUtil.getConnection();
         PreparedStatement pstmt = con.prepareStatement(INSERT_BOOK_SQL);
         
-        pstmt.setString(2, book.getTitle());
-        pstmt.setString(3, book.getWriter());
-        pstmt.setString(4, book.getGenre());
-        pstmt.setLong(5, book.getPrice());
+        pstmt.setString(1, book.getTitle());
+        pstmt.setString(2, book.getWriter());
+        pstmt.setString(3, book.getGenre());
+        pstmt.setLong(4, book.getPrice());
         
         pstmt.executeUpdate();
         
@@ -42,28 +50,19 @@ public class BookDao {
       PreparedStatement pstmt = con.prepareStatement(GET_ALL_BOOKS_SQL);
       ResultSet rs = pstmt.executeQuery();
       
-      while(rs.next()) {
-    	  long no = rs.getLong("BOOK_NO");
-    	  String title = rs.getString("BOOK_TITLE");
-    	  String writer = rs.getString("BOOK_WRITER");
-    	  String genre = rs.getString("BOOK_GENRE");
-    	  long price = rs.getLong("BOOK_PRICE");
-    	  long stock = rs.getLong("BOOK_STOCK");
-    	  String status = rs.getString("BOOK_STATUS");
-    	  Date createDate = rs.getDate("BOOK_CREATE_DATE");
-    	  
+      if (rs.next()) {
     	  Book book = new Book();
-    	  book.setNo(no);
-    	  book.setTitle(title);
-    	  book.setWriter(writer);
-    	  book.setGenre(genre);
-    	  book.setPrice(price);
-    	  book.setStock(stock);
-    	  book.setStatus(status);
-    	  book.setCreateDate(createDate);
-    	  
+    	  book.setNo(rs.getInt("BOOK_NO"));
+    	  book.setTitle(rs.getString("BOOK_TITLE"));
+    	  book.setWriter(rs.getString("BOOK_WRITER"));
+    	  book.setGenre(rs.getString("BOOK_GENRE"));
+    	  book.setPrice(rs.getInt("BOOK_PRICE"));
+    	  book.setStock(rs.getInt("BOOK_STOCK"));
+    	  book.setStatus(rs.getString("BOOK_STATUS"));
+    	  book.setCreateDate(rs.getDate("BOOK_CREATE_DATE"));
+
     	  bookList.add(book);
-    	  
+
       }
       
       rs.close();
@@ -73,6 +72,12 @@ public class BookDao {
       return bookList;
     }
     
+    /**
+     *책번호에 해당하는 책정보를 조회한다	 
+     * @param bookNo 책번호
+     * @return 책정보, null이 반환될 수도있음
+     * @throws SQLException
+     */
     public Book getBookByNo(int bookNo) throws SQLException {
       Book book = null;
       Connection con = ConnectionUtil.getConnection();
@@ -81,34 +86,22 @@ public class BookDao {
       
       ResultSet rs = pstmt.executeQuery();
       
-      while(rs.next()) {
-    	  if(bookNo == rs.getLong(1)) {
-    		  Book book2 = new Book();
-    		  long no = rs.getLong("BOOK_NO");
-        	  String title = rs.getString("BOOK_TITLE");
-        	  String writer = rs.getString("BOOK_WRITER");
-        	  String genre = rs.getString("BOOK_GENRE");
-        	  long price = rs.getLong("BOOK_PRICE");
-        	  long stock = rs.getLong("BOOK_STOCK");
-        	  String status = rs.getString("BOOK_STATUS");
-        	  Date createDate = rs.getDate("BOOK_CREATE_DATE");
-        	  
-        	  book2.setNo(no);
-        	  book2.setTitle(title);
-        	  book2.setWriter(writer);
-        	  book2.setGenre(genre);
-        	  book2.setPrice(price);
-        	  book2.setStock(stock);
-        	  book2.setStatus(status);
-        	  book2.setCreateDate(createDate);
-        	  
-        	  return book2;
-    	  }
+      if (rs.next()) {
+    	  book = new Book();
+    	  book.setNo(rs.getInt("BOOK_NO"));
+    	  book.setTitle(rs.getString("BOOK_TITLE"));
+    	  book.setWriter(rs.getString("BOOK_WRITER"));
+    	  book.setGenre(rs.getString("BOOK_GENRE"));
+    	  book.setPrice(rs.getInt("BOOK_PRICE"));
+    	  book.setStock(rs.getInt("BOOK_STOCK"));
+    	  book.setStatus(rs.getString("BOOK_STATUS"));
+    	  book.setCreateDate(rs.getDate("BOOK_CREATE_DATE"));
+    	  
       }
-      rs.close();
+      rs.close();    
       pstmt.close();
       con.close();
-      
+
       return book;
     }
     

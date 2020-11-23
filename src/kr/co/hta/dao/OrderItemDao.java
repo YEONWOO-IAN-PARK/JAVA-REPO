@@ -18,6 +18,18 @@ public class OrderItemDao {
     private static final String GET_ORDER_ITEMS_BY_ORDER_NO_SQL =
     		"SELECT * FROM SAMPLE_ORDER_ITEMS WHERE ORDER_NO = ?";
     
+    // 싱글턴 객체로 만든기(생성자 은닉화, 정적변수에 객체담기, 객체를 제공하는 정적메소드 정의하기)
+    private OrderItemDao() {}
+    private static OrderItemDao orderItemDao = new OrderItemDao();
+    public static OrderItemDao getInstance() {
+    	return orderItemDao;
+    }
+    
+    /**
+     * 주문 상품정보를 저장한다.
+     * @param orderItem 
+     * @throws SQLException
+     */
     public void insertOrderItem(OrderItem orderItem) throws SQLException {
     	Connection con = ConnectionUtil.getConnection();
     	PreparedStatement pstmt = con.prepareStatement(INSERT_ORDER_ITEM_SQL);
@@ -40,21 +52,14 @@ public class OrderItemDao {
       ResultSet rs = pstmt.executeQuery();
       
       while(rs.next()) {
-    	if(orderNo == rs.getLong(1)) {
     		OrderItem orderItem = new OrderItem();
-    		// 메소드명은 orderItems를 반환한다는데 왜 반환타입이 List<Order>인거죠?
-    		long no = rs.getLong("ORDER_NO");
-    		long bookNo = rs.getLong("BOOK_NO");
-    		long price = rs.getLong("ORDER_PRICE");
-    		long amount = rs.getLong("ORDER_AMOUNT");
-    		
-    		orderItem.setNo(no);
-    		orderItem.setBookNo(bookNo);
-    		orderItem.setPrice(price);
-    		orderItem.setAmount(amount);
-    		
+    		// 메소드명은 orderItems를 반환한다는데 왜 반환타입이 List<Order>인거죠?		
+    		orderItem.setNo(rs.getLong("ORDER_NO"));
+    		orderItem.setBookNo(rs.getInt("BOOK_NO"));
+    		orderItem.setPrice(rs.getInt("ORDER_PRICE"));
+    		orderItem.setAmount(rs.getInt("ORDER_AMOUNT"));
+    	
     		orderList.add(orderItem);
-    	}  
       }
       rs.close();
       pstmt.close();

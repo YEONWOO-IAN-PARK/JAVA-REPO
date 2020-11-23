@@ -14,22 +14,40 @@ import kr.co.hta.vo.Order;
 public class OrderDao {
 
 	private static final String GET_NEW_ORDER_NO_SQL = "SELECT SAMPLE_ORDER_SEQ.NEXTVAL AS ORDERNO FROM DUAL";
-    private static final String INSERT_ORDER_SQL = "INSERT INTO SAMPLE_ORDERS (ORDER_NO, USER_ID, ORDER_STATUS) VALUES (?, ?, ?, ?)";
+    private static final String INSERT_ORDER_SQL = "INSERT INTO SAMPLE_ORDERS (ORDER_NO, USER_ID, ORDER_STATUS) VALUES (?, ?, ?)";
     private static final String GET_ORDERS_BY_USER_ID_SQL = "SELECT * FROM SAMPLE_ORDERS WHERE USER_ID = ?";
     private static final String GET_ORDER_BY_NO_SQL = "SELECT * FROM SAMPLE_ORDERS WHERE ORDER_NO = ?";
     private static final String UPDATE_ORDER_SQL = "UPDATE SAMPLE_ORDERS SET ORDER_STATUS = ? WHERE ORDER_NO = ?";
     
-    public int getNewOrderNo() throws SQLException {
-      int orderNo = 0;
+    // 싱글턴 객체로 만든기(생성자 은닉화, 정적변수에 객체담기, 객체를 제공하는 정적메소드 정의하기)
+    private OrderDao () {}
+    private static OrderDao orderDao = new OrderDao();
+    public static OrderDao getInstance() {
+    	return orderDao;
+    }
+    
+    public long getNewOrderNo() throws SQLException {
+      long orderNo = 0;
       Connection con = ConnectionUtil.getConnection();
       PreparedStatement pstmt = con.prepareStatement(GET_NEW_ORDER_NO_SQL);
       ResultSet rs = pstmt.executeQuery();
       // 모르겠다..정말
-     
+     if(rs.next()) {
+    	 orderNo = rs.getLong("ORDERNO");
+    	 
+     }
+      rs.close();
+      pstmt.close();
+      con.close();
       
       return orderNo;
     }
-    
+   
+    /**
+     * 주문정보를 저장한다
+     * @param order 새 주문정보
+     * @throws SQLException
+     */
     public void insertOrder(Order order) throws SQLException {
     	Connection con = ConnectionUtil.getConnection();
     	PreparedStatement pstmt = con.prepareStatement(INSERT_ORDER_SQL);
@@ -83,20 +101,11 @@ public class OrderDao {
       ResultSet rs = pstmt.executeQuery();
       
       while(rs.next()) {
-    	  if(orderNo == rs.getLong(1)) {
-    		  Order order2 = new Order();
-    		  Long no = rs.getLong("ORDER_NO");
-    		  String id = rs.getString("USER_ID");
-    		  String status = rs.getString("ORDER_STATUS");
-    		  Date createDate = rs.getDate("ORDER_CREATE_DATE");
-    		  
-    		  order2.setNo(no);
-    		  order2.setUserId(id);
-    		  order2.setStatus(status);
-    		  order2.setCreateDate(createDate);
-    		  
-    		  return order2;
-    	  }
+    	  Order order2 = new Order();
+    	  order2.setNo(rs.getLong("ORDER_NO"));
+    	  order2.setUserId(rs.getString("USER_ID"));
+    	  order2.setStatus(rs.getString("ORDER_STATUS"));
+    	  order2.setCreateDate(rs.getDate("ORDER_CREATE_DATE"));
       }
       rs.close();
       pstmt.close();

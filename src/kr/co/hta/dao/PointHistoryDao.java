@@ -16,14 +16,26 @@ public class PointHistoryDao {
 			+ "VALUES(SAMPLE_POINT_HISTORY_SEQ.NEXTVAL, ?, ?, ?)";
 	private static final String GET_POINT_HISTORIES_BY_USER_ID_SQL = 
 			"SELECT * FROM SAMPLE_USER_POINT_HISTORIES WHERE  = ? ORDER BY HISTORY_NO DESC";
+	
+	// 싱글턴 객체로 만든기(생성자 은닉화, 정적변수에 객체담기, 객체를 제공하는 정적메소드 정의하기)
+	private PointHistoryDao() {}
+	private static PointHistoryDao pointHistoryDao = new PointHistoryDao();
+	public static PointHistoryDao getInstance( ) {
+		return pointHistoryDao;
+	}
 
+	/**
+	 * 포인트 변경이력을 저장한다.
+	 * @param pointHistory
+	 * @throws SQLException
+	 */
 	public void insertPointHistory(PointHistory pointHistory) throws SQLException {
 		Connection con = ConnectionUtil.getConnection();
 		PreparedStatement pstmt = con.prepareStatement(INSERT_POINT_HISTORY_SQL);
 		//pstmt.setLong(1, pointHistory.getNo());
-		pstmt.setString(2, pointHistory.getUserId());
-		pstmt.setString(3, pointHistory.getContent());
-		pstmt.setLong(4, pointHistory.getPoint());
+		pstmt.setString(1, pointHistory.getUserId());
+		pstmt.setString(2, pointHistory.getContent());
+		pstmt.setLong(3, pointHistory.getPoint());
 		
 		pstmt.executeUpdate();
 		
@@ -40,18 +52,10 @@ public class PointHistoryDao {
 		pstmt.setString(1, userId);
 		ResultSet rs = pstmt.executeQuery();
 		while(rs.next()) {
-			if(userId.equals(rs.getString(1))) {
-				long no = rs.getLong("HISTORY_NO");
-				String userid = rs.getString("USER_ID");
-				String content = rs.getString("HISTORY_CONTENT");
-
-				ph.setNo(no);
-				ph.setUserId(userid);
-				ph.setContent(content);
-
+				ph.setUserId(rs.getString("USER_ID"));
+				ph.setContent(rs.getString("HISTORY_CONTENT"));
+				ph.setPoint(rs.getInt("HISTORY_POINT"));
 				pointHistoryList.add(ph);
-
-			}
 		}
 		rs.close();
 		pstmt.close();
